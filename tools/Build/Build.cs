@@ -13,7 +13,7 @@ internal static class Build
 				{
 					GitLogin = new GitLoginInfo("faithlifebuildbot", Environment.GetEnvironmentVariable("BUILD_BOT_PASSWORD") ?? ""),
 					GitAuthor = new GitAuthorInfo("Faithlife Build Bot", "faithlifebuildbot@users.noreply.github.com"),
-					SourceCodeUrl = "https://github.com/Faithlife/RepoName/tree/master/src",
+					SourceCodeUrl = "https://github.com/Faithlife/SimpleDataflows/tree/master/src",
 				},
 			});
 	});

@@ -8,7 +8,7 @@
     <NoWarn>$(NoWarn);1591;1998;NU5105</NoWarn>
     <DebugType>embedded</DebugType>
     <GitHubOrganization>Faithlife</GitHubOrganization>
-    <RepositoryName>RepoName</RepositoryName>
+    <RepositoryName>SimpleDataflows</RepositoryName>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/$(GitHubOrganization)/$(RepositoryName)</PackageProjectUrl>
     <PackageReleaseNotes>https://github.com/$(GitHubOrganization)/$(RepositoryName)/blob/master/ReleaseNotes.md</PackageReleaseNotes>
