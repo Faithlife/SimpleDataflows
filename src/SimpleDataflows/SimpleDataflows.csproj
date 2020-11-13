@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Description>SimpleDataflows class library.</Description>
-    <PackageTags></PackageTags>
+    <Description>Helpers for creating simple pipelines using TPL Dataflow.</Description>
+    <PackageTags>tpl dataflow</PackageTags>
     <IsPackable>true</IsPackable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
