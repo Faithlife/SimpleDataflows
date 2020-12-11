@@ -19,7 +19,22 @@ namespace SimpleDataflows.Tests
 				.Transform(x => x.Sum())
 				.ForAll(x => list.Add(x))
 				.ExecuteAsync();
-			CollectionAssert.AreEqual(new[] { 5106 }, list);
+			CollectionAssert.AreEqual(new[] { 1 + 55 + 5050 }, list);
+		}
+
+		[Test]
+		public async Task VoidStart()
+		{
+			var list = new ConcurrentBag<int>();
+			await SimpleDataflow.Create()
+				.TransformMany(_ => Enumerable.Range(1, 100))
+				.Batch(10)
+				.Transform(async x => await Task.Run(x.Sum))
+				.Batch(int.MaxValue)
+				.Transform(x => x.Sum())
+				.ForAll(x => list.Add(x))
+				.ExecuteAsync();
+			CollectionAssert.AreEqual(new[] { 5050 }, list);
 		}
 	}
 }

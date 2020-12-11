@@ -15,9 +15,18 @@ namespace SimpleDataflows
 		/// <summary>
 		/// Starts a linear pipeline of data using TPL Dataflow.
 		/// </summary>
+		public static SimpleDataflow<ValueTuple> Create(CancellationToken cancellationToken = default)
+		{
+			var input = new TransformBlock<ValueTuple, ValueTuple>(x => x);
+			return new SimpleDataflow<ValueTuple>(input, input, cancellationToken);
+		}
+
+		/// <summary>
+		/// Starts a linear pipeline of data using TPL Dataflow.
+		/// </summary>
 		public static SimpleDataflow<T> Create<T>(IEnumerable<T> initial, CancellationToken cancellationToken = default)
 		{
-			var input = new TransformManyBlock<object, T>(_ => initial);
+			var input = new TransformManyBlock<ValueTuple, T>(_ => initial);
 			return new SimpleDataflow<T>(input, input, cancellationToken);
 		}
 
@@ -95,12 +104,12 @@ namespace SimpleDataflows
 		public async Task ExecuteAsync()
 		{
 			m_output.LinkTo(DataflowBlock.NullTarget<T>());
-			m_input.Post(this);
+			m_input.Post(default);
 			m_input.Complete();
 			await m_output.Completion.ConfigureAwait(false);
 		}
 
-		internal SimpleDataflow(ITargetBlock<object> input, ISourceBlock<T> output, CancellationToken cancellationToken)
+		internal SimpleDataflow(ITargetBlock<ValueTuple> input, ISourceBlock<T> output, CancellationToken cancellationToken)
 		{
 			m_input = input;
 			m_output = output;
@@ -127,7 +136,7 @@ namespace SimpleDataflows
 			return item;
 		}
 
-		private readonly ITargetBlock<object> m_input;
+		private readonly ITargetBlock<ValueTuple> m_input;
 		private readonly ISourceBlock<T> m_output;
 		private readonly CancellationToken m_cancellationToken;
 	}
