@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Concurrent;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
 
@@ -36,5 +38,65 @@ namespace SimpleDataflows.Tests
 				.ExecuteAsync();
 			CollectionAssert.AreEqual(new[] { 5050 }, list);
 		}
+
+		[Test]
+		public async Task BoundedCapacity([Values(1, 2)] int value)
+		{
+			var monitor = new object();
+			var running = 0;
+			var maxRunning = 0;
+			await SimpleDataflow.Create(Enumerable.Range(0, 4))
+				.BoundedCapacity(value)
+				.Transform(x =>
+				{
+					lock (monitor)
+						running++;
+					Thread.Sleep(1000);
+					lock (monitor)
+						maxRunning = Math.Max(running--, maxRunning);
+					return x;
+				})
+				.ExecuteAsync();
+			Assert.AreEqual(value, maxRunning);
+		}
+
+		[Test]
+		public async Task EnsureOrdered([Values] bool? value)
+		{
+			var stack = new ConcurrentQueue<int>();
+			var dataflow = SimpleDataflow.Create(new[] { 2000, 0 });
+			if (value != null)
+				dataflow = dataflow.EnsureOrdered(value.Value);
+			await dataflow.Transform(async x =>
+				{
+					await Task.Delay(x);
+					return x;
+				})
+				.ForAll(x => stack.Enqueue(x))
+				.ExecuteAsync();
+			CollectionAssert.AreEqual((value ?? true) ? new[] { 2000, 0 } : new[] { 0, 2000 }, stack);
+		}
+
+		[Test]
+		public async Task MaxDegreeOfParallelism([Values(1, 2)] int value)
+		{
+			var monitor = new object();
+			var running = 0;
+			var maxRunning = 0;
+			await SimpleDataflow.Create(Enumerable.Range(0, 4))
+				.MaxDegreeOfParallelism(value)
+				.Transform(x =>
+				{
+					lock (monitor)
+						running++;
+					Thread.Sleep(1000);
+					lock (monitor)
+						maxRunning = Math.Max(running--, maxRunning);
+					return x;
+				})
+				.ExecuteAsync();
+			Assert.AreEqual(value, maxRunning);
+		}
 	}
 }
+
