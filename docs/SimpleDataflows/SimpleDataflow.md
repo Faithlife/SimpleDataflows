@@ -10,6 +10,7 @@ public static class SimpleDataflow
 
 | name | description |
 | --- | --- |
+| static [Create](SimpleDataflow/Create.md)(…) | Starts a linear pipeline of data using TPL Dataflow. |
 | static [Create&lt;T&gt;](SimpleDataflow/Create.md)(…) | Starts a linear pipeline of data using TPL Dataflow. |
 
 ## See Also

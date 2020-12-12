@@ -1,4 +1,21 @@
-# SimpleDataflow.Create&lt;T&gt; method
+# SimpleDataflow.Create method (1 of 2)
+
+Starts a linear pipeline of data using TPL Dataflow.
+
+```csharp
+public static SimpleDataflow<ValueTuple> Create(
+    CancellationToken cancellationToken = default(CancellationToken))
+```
+
+## See Also
+
+* class [SimpleDataflow&lt;T&gt;](../SimpleDataflow-1.md)
+* class [SimpleDataflow](../SimpleDataflow.md)
+* namespace [SimpleDataflows](../../SimpleDataflows.md)
+
+---
+
+# SimpleDataflow.Create&lt;T&gt; method (2 of 2)
 
 Starts a linear pipeline of data using TPL Dataflow.
 
