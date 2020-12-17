@@ -75,6 +75,8 @@ namespace SimpleDataflows
 		/// <summary>
 		/// Links a <c>TransformManyBlock</c> to the pipeline.
 		/// </summary>
+		/// <remarks>If necessary, use <c>Enumerable.AsEnumerable</c> to cast the return value to an
+		/// <c>IEnumerable&lt;T&gt;</c> when using a lambda expression.</remarks>
 		public SimpleDataflow<TNext> TransformMany<TNext>(Func<T, Task<IEnumerable<TNext>>> func) =>
 			LinkTo(new TransformManyBlock<T, TNext>(func, m_nextBlockOptions));
 
