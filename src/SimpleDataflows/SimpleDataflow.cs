@@ -140,7 +140,8 @@ namespace SimpleDataflows
 		public async Task ExecuteAsync()
 		{
 			m_output.LinkTo(DataflowBlock.NullTarget<T>());
-			m_input.Post(default);
+			if (!await m_input.SendAsync(default).ConfigureAwait(false))
+				throw new InvalidOperationException("Input rejected.");
 			m_input.Complete();
 			await m_output.Completion.ConfigureAwait(false);
 		}
