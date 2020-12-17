@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -63,18 +64,20 @@ namespace SimpleDataflows.Tests
 		[Test]
 		public async Task EnsureOrdered([Values] bool? value)
 		{
-			var stack = new ConcurrentQueue<int>();
+			var list = new List<int>();
 			var dataflow = SimpleDataflow.Create(new[] { 2000, 0 });
 			if (value != null)
 				dataflow = dataflow.EnsureOrdered(value.Value);
-			await dataflow.Transform(async x =>
+			await dataflow
+				.Transform(async x =>
 				{
 					await Task.Delay(x);
 					return x;
 				})
-				.ForAll(x => stack.Enqueue(x))
+				.MaxDegreeOfParallelism(1)
+				.ForAll(x => list.Add(x))
 				.ExecuteAsync();
-			CollectionAssert.AreEqual((value ?? true) ? new[] { 2000, 0 } : new[] { 0, 2000 }, stack);
+			CollectionAssert.AreEqual((value ?? true) ? new[] { 2000, 0 } : new[] { 0, 2000 }, list);
 		}
 
 		[Test]
