@@ -35,7 +35,7 @@ namespace SimpleDataflows
 		private static ExecutionDataflowBlockOptions CreateDefaultBlockOptions(CancellationToken cancellationToken) =>
 			new ExecutionDataflowBlockOptions
 			{
-				BoundedCapacity = Environment.ProcessorCount,
+				BoundedCapacity = DataflowBlockOptions.Unbounded,
 				CancellationToken = cancellationToken,
 				EnsureOrdered = true,
 				MaxDegreeOfParallelism = Environment.ProcessorCount,
@@ -108,8 +108,9 @@ namespace SimpleDataflows
 		}
 
 		/// <summary>
-		/// Sets the bounded capacity for the next blocks. (Default Environment.ProcessorCount.)
+		/// Sets the bounded capacity for the next blocks. (Default <c>DataflowBlockOptions.Unbounded</c>.)
 		/// </summary>
+		/// <remarks>Use this setting to avoid running out of memory while earlier blocks wait for later blocks.</remarks>
 		public SimpleDataflow<T> BoundedCapacity(int value)
 		{
 			m_nextBlockOptions.BoundedCapacity = value;
@@ -117,7 +118,7 @@ namespace SimpleDataflows
 		}
 
 		/// <summary>
-		/// Sets ordered processing for the next blocks. (Default true.)
+		/// Sets ordered processing for the next blocks. (Default <c>true</c>.)
 		/// </summary>
 		public SimpleDataflow<T> EnsureOrdered(bool value)
 		{
@@ -126,7 +127,7 @@ namespace SimpleDataflows
 		}
 
 		/// <summary>
-		/// Sets the maximum degree of parallelism for the next blocks. (Default Environment.ProcessorCount.)
+		/// Sets the maximum degree of parallelism for the next blocks. (Default <c>Environment.ProcessorCount</c>.)
 		/// </summary>
 		public SimpleDataflow<T> MaxDegreeOfParallelism(int value)
 		{
