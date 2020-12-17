@@ -38,7 +38,7 @@ namespace SimpleDataflows
 				BoundedCapacity = DataflowBlockOptions.Unbounded,
 				CancellationToken = cancellationToken,
 				EnsureOrdered = true,
-				MaxDegreeOfParallelism = Environment.ProcessorCount,
+				MaxDegreeOfParallelism = Math.Max(1, Environment.ProcessorCount / 2),
 			};
 	}
 
@@ -129,7 +129,7 @@ namespace SimpleDataflows
 		}
 
 		/// <summary>
-		/// Sets the maximum degree of parallelism for the next blocks. (Default <c>Environment.ProcessorCount</c>.)
+		/// Sets the maximum degree of parallelism for the next blocks. (Default <c>Environment.ProcessorCount / 2</c>.)
 		/// </summary>
 		public SimpleDataflow<T> MaxDegreeOfParallelism(int value)
 		{
