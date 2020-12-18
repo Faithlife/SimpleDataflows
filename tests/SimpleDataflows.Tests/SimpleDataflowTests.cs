@@ -58,11 +58,13 @@ namespace SimpleDataflows.Tests
 					return x;
 				})
 				.ExecuteAsync();
-			Assert.AreEqual(value, maxRunning);
+			Assert.LessOrEqual(value, maxRunning);
 		}
 
-		[Test]
-		public async Task EnsureOrdered([Values] bool? value)
+		[TestCase(true)]
+		[TestCase(null)]
+		[TestCase(false, Explicit = true, Reason = "Build servers don't always have multiple CPUs.")]
+		public async Task EnsureOrdered(bool? value)
 		{
 			var list = new List<int>();
 			var dataflow = SimpleDataflow.Create(new[] { 2000, 0 });
