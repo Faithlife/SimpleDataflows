@@ -1,6 +1,6 @@
 # SimpleDataflow&lt;T&gt;.EnsureOrdered method
 
-Sets ordered processing for the next blocks. (Default true.)
+Sets ordered processing for the next blocks. (Default `true`.)
 
 ```csharp
 public SimpleDataflow EnsureOrdered(bool value)

@@ -1,10 +1,14 @@
 # SimpleDataflow&lt;T&gt;.BoundedCapacity method
 
-Sets the bounded capacity for the next blocks. (Default Environment.ProcessorCount.)
+Sets the bounded capacity for the next blocks. (Default `DataflowBlockOptions.Unbounded`.)
 
 ```csharp
 public SimpleDataflow BoundedCapacity(int value)
 ```
+
+## Remarks
+
+Use this setting to avoid running out of memory while earlier blocks wait for later blocks.
 
 ## See Also
 

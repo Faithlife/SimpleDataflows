@@ -21,6 +21,10 @@ Links a `TransformManyBlock` to the pipeline.
 public SimpleDataflow<TNext> TransformMany<TNext>(Func<T, Task<IEnumerable<TNext>>> func)
 ```
 
+## Remarks
+
+If necessary, use `Enumerable.AsEnumerable` to cast the return value to an `IEnumerable<T>` when using a lambda expression.
+
 ## See Also
 
 * class [SimpleDataflow&lt;T&gt;](../SimpleDataflow-1.md)
