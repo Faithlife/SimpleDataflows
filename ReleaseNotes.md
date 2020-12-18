@@ -1,5 +1,9 @@
 # Release Notes
 
+## 0.3.0
+
+* Change defaults for `BoundedCapacity` and `MaxDegreeOfParallelism`.
+
 ## 0.2.0
 
 * Support starting a pipeline with a single empty tuple.
