@@ -30,16 +30,16 @@ namespace SimpleDataflows
 			return new SimpleDataflow<T>(input, input, CreateDefaultBlockOptions(cancellationToken));
 		}
 
-		internal static readonly DataflowLinkOptions DataflowLinkOptions = new DataflowLinkOptions { PropagateCompletion = true };
+		internal static readonly DataflowLinkOptions DataflowLinkOptions = new() { PropagateCompletion = true };
 
 		private static ExecutionDataflowBlockOptions CreateDefaultBlockOptions(CancellationToken cancellationToken) =>
-			new ExecutionDataflowBlockOptions
-			{
-				BoundedCapacity = DataflowBlockOptions.Unbounded,
-				CancellationToken = cancellationToken,
-				EnsureOrdered = true,
-				MaxDegreeOfParallelism = Math.Max(1, Environment.ProcessorCount / 2),
-			};
+			new()
+		{
+			BoundedCapacity = DataflowBlockOptions.Unbounded,
+			CancellationToken = cancellationToken,
+			EnsureOrdered = true,
+			MaxDegreeOfParallelism = Math.Max(1, Environment.ProcessorCount / 2),
+		};
 	}
 
 	/// <summary>
