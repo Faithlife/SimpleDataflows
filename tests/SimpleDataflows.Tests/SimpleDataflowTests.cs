@@ -58,7 +58,7 @@ namespace SimpleDataflows.Tests
 					return x;
 				})
 				.ExecuteAsync();
-			Assert.LessOrEqual(value, maxRunning);
+			Assert.LessOrEqual(maxRunning, value);
 		}
 
 		[TestCase(true)]
