@@ -1,5 +1,10 @@
 # Release Notes
 
+## 0.4.0
+
+* Change default for `EnsureOrdered` to `false`.
+* Automatically cancel on exception.
+
 ## 0.3.0
 
 * Change defaults for `BoundedCapacity` and `MaxDegreeOfParallelism`.
