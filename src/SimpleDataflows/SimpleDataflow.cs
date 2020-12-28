@@ -18,7 +18,7 @@ namespace SimpleDataflows
 		public static SimpleDataflow<ValueTuple> Create(CancellationToken cancellationToken = default)
 		{
 			var input = new TransformBlock<ValueTuple, ValueTuple>(x => x);
-			return new SimpleDataflow<ValueTuple>(input, input, CreateDefaultBlockOptions(cancellationToken));
+			return new SimpleDataflow<ValueTuple>(input, input, CreateDefaultBlockOptions(cancellationToken), CancellationTokenSource.CreateLinkedTokenSource(cancellationToken));
 		}
 
 		/// <summary>
@@ -27,7 +27,7 @@ namespace SimpleDataflows
 		public static SimpleDataflow<T> Create<T>(IEnumerable<T> initial, CancellationToken cancellationToken = default)
 		{
 			var input = new TransformManyBlock<ValueTuple, T>(_ => initial);
-			return new SimpleDataflow<T>(input, input, CreateDefaultBlockOptions(cancellationToken));
+			return new SimpleDataflow<T>(input, input, CreateDefaultBlockOptions(cancellationToken), CancellationTokenSource.CreateLinkedTokenSource(cancellationToken));
 		}
 
 		internal static readonly DataflowLinkOptions DataflowLinkOptions = new() { PropagateCompletion = true };
@@ -52,25 +52,70 @@ namespace SimpleDataflows
 		/// Links a <c>TransformBlock</c> to the pipeline.
 		/// </summary>
 		public SimpleDataflow<TNext> Transform<TNext>(Func<T, TNext> func) =>
-			LinkTo(new TransformBlock<T, TNext>(func, m_nextBlockOptions));
+			LinkTo(new TransformBlock<T, TNext>(value =>
+			{
+				try
+				{
+					return func(value);
+				}
+				catch (Exception) when (CancelAndRethrow())
+				{
+					throw;
+				}
+			}, m_nextBlockOptions));
 
 		/// <summary>
 		/// Links a <c>TransformBlock</c> to the pipeline.
 		/// </summary>
 		public SimpleDataflow<TNext> Transform<TNext>(Func<T, Task<TNext>> func) =>
-			LinkTo(new TransformBlock<T, TNext>(func, m_nextBlockOptions));
+			LinkTo(new TransformBlock<T, TNext>(
+				async value =>
+				{
+					try
+					{
+						return await func(value).ConfigureAwait(false);
+					}
+					catch (Exception) when (CancelAndRethrow())
+					{
+						throw;
+					}
+				}, m_nextBlockOptions));
 
 		/// <summary>
 		/// Links a <c>TransformBlock</c> to the pipeline.
 		/// </summary>
-		public SimpleDataflow<TNext> Transform<TNext>(Func<T, CancellationToken, Task<TNext>> func) =>
-			LinkTo(new TransformBlock<T, TNext>(x => func(x, m_nextBlockOptions.CancellationToken), m_nextBlockOptions));
+		public SimpleDataflow<TNext> Transform<TNext>(Func<T, CancellationToken, Task<TNext>> func)
+		{
+			var cancellationToken = m_cancellationTokenSource.Token;
+			return LinkTo(new TransformBlock<T, TNext>(
+				async value =>
+				{
+					try
+					{
+						return await func(value, cancellationToken).ConfigureAwait(false);
+					}
+					catch (Exception) when (CancelAndRethrow())
+					{
+						throw;
+					}
+				}, m_nextBlockOptions));
+		}
 
 		/// <summary>
 		/// Links a <c>TransformManyBlock</c> to the pipeline.
 		/// </summary>
 		public SimpleDataflow<TNext> TransformMany<TNext>(Func<T, IEnumerable<TNext>> func) =>
-			LinkTo(new TransformManyBlock<T, TNext>(func, m_nextBlockOptions));
+			LinkTo(new TransformManyBlock<T, TNext>(value =>
+			{
+				try
+				{
+					return func(value);
+				}
+				catch (Exception) when (CancelAndRethrow())
+				{
+					throw;
+				}
+			}, m_nextBlockOptions));
 
 		/// <summary>
 		/// Links a <c>TransformManyBlock</c> to the pipeline.
@@ -78,7 +123,40 @@ namespace SimpleDataflows
 		/// <remarks>If necessary, use <c>Enumerable.AsEnumerable</c> to cast the return value to an
 		/// <c>IEnumerable&lt;T&gt;</c> when using a lambda expression.</remarks>
 		public SimpleDataflow<TNext> TransformMany<TNext>(Func<T, Task<IEnumerable<TNext>>> func) =>
-			LinkTo(new TransformManyBlock<T, TNext>(func, m_nextBlockOptions));
+			LinkTo(new TransformManyBlock<T, TNext>(
+				async value =>
+				{
+					try
+					{
+						return await func(value).ConfigureAwait(false);
+					}
+					catch (Exception) when (CancelAndRethrow())
+					{
+						throw;
+					}
+				}, m_nextBlockOptions));
+
+		/// <summary>
+		/// Links a <c>TransformManyBlock</c> to the pipeline.
+		/// </summary>
+		/// <remarks>If necessary, use <c>Enumerable.AsEnumerable</c> to cast the return value to an
+		/// <c>IEnumerable&lt;T&gt;</c> when using a lambda expression.</remarks>
+		public SimpleDataflow<TNext> TransformMany<TNext>(Func<T, CancellationToken, Task<IEnumerable<TNext>>> func)
+		{
+			var cancellationToken = m_cancellationTokenSource.Token;
+			return LinkTo(new TransformManyBlock<T, TNext>(
+				async value =>
+				{
+					try
+					{
+						return await func(value, cancellationToken).ConfigureAwait(false);
+					}
+					catch (Exception) when (CancelAndRethrow())
+					{
+						throw;
+					}
+				}, m_nextBlockOptions));
+		}
 
 		/// <summary>
 		/// Links a <c>BatchBlock</c> to the pipeline.
@@ -91,14 +169,60 @@ namespace SimpleDataflows
 		/// </summary>
 		/// <remarks>Implemented with a <c>TransformBlock</c> that returns the same items.</remarks>
 		public SimpleDataflow<T> ForAll(Action<T> action) =>
-			LinkTo(new TransformBlock<T, T>(x => ForItem(x, action), m_nextBlockOptions));
+			LinkTo(new TransformBlock<T, T>(
+				value =>
+				{
+					try
+					{
+						action(value);
+						return value;
+					}
+					catch (Exception) when (CancelAndRethrow())
+					{
+						throw;
+					}
+				}, m_nextBlockOptions));
 
 		/// <summary>
 		/// Executes the specified action on each item in the pipeline.
 		/// </summary>
 		/// <remarks>Implemented with a <c>TransformBlock</c> that returns the same items.</remarks>
 		public SimpleDataflow<T> ForAll(Func<T, Task> action) =>
-			LinkTo(new TransformBlock<T, T>(x => ForItemAsync(x, action), m_nextBlockOptions));
+			LinkTo(new TransformBlock<T, T>(
+				async value =>
+				{
+					try
+					{
+						await action(value).ConfigureAwait(false);
+						return value;
+					}
+					catch (Exception) when (CancelAndRethrow())
+					{
+						throw;
+					}
+				}, m_nextBlockOptions));
+
+		/// <summary>
+		/// Executes the specified action on each item in the pipeline.
+		/// </summary>
+		/// <remarks>Implemented with a <c>TransformBlock</c> that returns the same items.</remarks>
+		public SimpleDataflow<T> ForAll(Func<T, CancellationToken, Task> action)
+		{
+			var cancellationToken = m_cancellationTokenSource.Token;
+			return LinkTo(new TransformBlock<T, T>(
+				async value =>
+				{
+					try
+					{
+						await action(value, cancellationToken).ConfigureAwait(false);
+						return value;
+					}
+					catch (Exception) when (CancelAndRethrow())
+					{
+						throw;
+					}
+				}, m_nextBlockOptions));
+		}
 
 		/// <summary>
 		/// Links the specified block to the pipeline.
@@ -106,7 +230,7 @@ namespace SimpleDataflows
 		public SimpleDataflow<TNext> LinkTo<TNext>(IPropagatorBlock<T, TNext> newOutput)
 		{
 			m_output.LinkTo(newOutput, SimpleDataflow.DataflowLinkOptions);
-			return new SimpleDataflow<TNext>(m_input, newOutput, m_nextBlockOptions);
+			return new SimpleDataflow<TNext>(m_input, newOutput, m_nextBlockOptions, m_cancellationTokenSource);
 		}
 
 		/// <summary>
@@ -150,29 +274,26 @@ namespace SimpleDataflows
 				throw new InvalidOperationException("Input rejected.");
 			m_input.Complete();
 			await m_output.Completion.ConfigureAwait(false);
+			m_cancellationTokenSource.Dispose();
 		}
 
-		internal SimpleDataflow(ITargetBlock<ValueTuple> input, ISourceBlock<T> output, ExecutionDataflowBlockOptions nextBlockOptions)
+		private bool CancelAndRethrow()
+		{
+			m_cancellationTokenSource.Cancel();
+			return false;
+		}
+
+		internal SimpleDataflow(ITargetBlock<ValueTuple> input, ISourceBlock<T> output, ExecutionDataflowBlockOptions nextBlockOptions, CancellationTokenSource cancellationTokenSource)
 		{
 			m_input = input;
 			m_output = output;
 			m_nextBlockOptions = nextBlockOptions;
-		}
-
-		private static T ForItem(T item, Action<T> action)
-		{
-			action(item);
-			return item;
-		}
-
-		private static async Task<T> ForItemAsync(T item, Func<T, Task> action)
-		{
-			await action(item).ConfigureAwait(false);
-			return item;
+			m_cancellationTokenSource = cancellationTokenSource;
 		}
 
 		private readonly ITargetBlock<ValueTuple> m_input;
 		private readonly ISourceBlock<T> m_output;
 		private readonly ExecutionDataflowBlockOptions m_nextBlockOptions;
+		private readonly CancellationTokenSource m_cancellationTokenSource;
 	}
 }

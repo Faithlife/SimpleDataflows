@@ -98,5 +98,45 @@ namespace SimpleDataflows.Tests
 				.ExecuteAsync();
 			Assert.AreEqual(value, maxRunning);
 		}
+
+		[Test]
+		public async Task Exception()
+		{
+			try
+			{
+				await SimpleDataflow.Create()
+					.ForAll(_ => throw new InvalidOperationException())
+					.ExecuteAsync();
+				Assert.Fail();
+			}
+			catch (InvalidOperationException)
+			{
+			}
+		}
+
+		[Test]
+		public async Task Cancelled()
+		{
+			using var cts = new CancellationTokenSource();
+			cts.Cancel();
+			try
+			{
+				await SimpleDataflow.Create(cts.Token)
+					.ForAll(_ => throw new InvalidOperationException())
+					.ExecuteAsync();
+				Assert.Fail();
+			}
+			catch (OperationCanceledException)
+			{
+			}
+		}
+
+		[Test]
+		public async Task ExecuteTwice()
+		{
+			var dataflow = SimpleDataflow.Create();
+			await dataflow.ExecuteAsync();
+			Assert.ThrowsAsync<InvalidOperationException>(dataflow.ExecuteAsync);
+		}
 	}
 }
