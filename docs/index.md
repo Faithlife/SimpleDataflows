@@ -27,6 +27,8 @@ await SimpleDataflow.Create(Directory.EnumerateFiles(".", "*.txt"))
     .ExecuteAsync();
 ```
 
+If an exception is thrown, the pipeline is automatically cancelled. To ensure that long-running blocks respect automatic cancellation, use dataflow block methods that provide a cancellation token to the specified delegate.
+
 See [the documentation](SimpleDataflows/SimpleDataflow-1.md) for descriptions of each dataflow block method, including [`TransformMany`](SimpleDataflows/SimpleDataflow-1/TransformMany.md), [`Batch`](SimpleDataflows/SimpleDataflow-1/Batch.md), and [`ForAll`](SimpleDataflows/SimpleDataflow-1/ForAll.md).
 
 By default, [`MaxDegreeOfParallelism`](https://docs.microsoft.com/en-us/dotnet/api/system.threading.tasks.dataflow.executiondataflowblockoptions.maxdegreeofparallelism) is set to `Environment.ProcessorCount / 2` and [`EnsureOrdered`](https://docs.microsoft.com/en-us/dotnet/api/system.threading.tasks.dataflow.dataflowblockoptions.ensureordered) is set to `false`. To customize this or other settings, include calls to the [corresponding methods](SimpleDataflows/SimpleDataflow-1.md) to impact all of the dataflow blocks that follow, e.g. [`MaxDegreeOfParallelism`](SimpleDataflows/SimpleDataflow-1/MaxDegreeOfParallelism.md).
