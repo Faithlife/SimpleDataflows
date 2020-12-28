@@ -34,12 +34,12 @@ namespace SimpleDataflows
 
 		private static ExecutionDataflowBlockOptions CreateDefaultBlockOptions(CancellationToken cancellationToken) =>
 			new()
-		{
-			BoundedCapacity = DataflowBlockOptions.Unbounded,
-			CancellationToken = cancellationToken,
-			EnsureOrdered = true,
-			MaxDegreeOfParallelism = Math.Max(1, Environment.ProcessorCount / 2),
-		};
+			{
+				BoundedCapacity = DataflowBlockOptions.Unbounded,
+				CancellationToken = cancellationToken,
+				EnsureOrdered = false,
+				MaxDegreeOfParallelism = Math.Max(1, Environment.ProcessorCount / 2),
+			};
 	}
 
 	/// <summary>
@@ -110,9 +110,10 @@ namespace SimpleDataflows
 		}
 
 		/// <summary>
-		/// Sets the bounded capacity for the next blocks. (Default <c>DataflowBlockOptions.Unbounded</c>.)
+		/// Sets the bounded capacity for the next blocks.
 		/// </summary>
-		/// <remarks>Use this setting to avoid running out of memory while earlier blocks wait for later blocks.</remarks>
+		/// <remarks>Use this setting to avoid running out of memory while earlier blocks wait for later blocks.
+		/// If this method is not called, the default is <c>DataflowBlockOptions.Unbounded</c>.</remarks>
 		public SimpleDataflow<T> BoundedCapacity(int value)
 		{
 			m_nextBlockOptions.BoundedCapacity = value;
@@ -120,17 +121,19 @@ namespace SimpleDataflows
 		}
 
 		/// <summary>
-		/// Sets ordered processing for the next blocks. (Default <c>true</c>.)
+		/// Sets ordered processing for the next blocks.
 		/// </summary>
-		public SimpleDataflow<T> EnsureOrdered(bool value)
+		/// <remarks>If this method is not called, the default is unordered.</remarks>
+		public SimpleDataflow<T> EnsureOrdered(bool value = true)
 		{
 			m_nextBlockOptions.EnsureOrdered = value;
 			return this;
 		}
 
 		/// <summary>
-		/// Sets the maximum degree of parallelism for the next blocks. (Default <c>Environment.ProcessorCount / 2</c>.)
+		/// Sets the maximum degree of parallelism for the next blocks.
 		/// </summary>
+		/// <remarks>If this method is not called, the default is <c>Environment.ProcessorCount / 2</c>.</remarks>
 		public SimpleDataflow<T> MaxDegreeOfParallelism(int value)
 		{
 			m_nextBlockOptions.MaxDegreeOfParallelism = value;

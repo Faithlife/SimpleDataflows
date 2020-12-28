@@ -61,16 +61,12 @@ namespace SimpleDataflows.Tests
 			Assert.LessOrEqual(maxRunning, value);
 		}
 
-		[TestCase(true)]
-		[TestCase(null)]
-		[TestCase(false, Explicit = true, Reason = "Build servers don't always have multiple CPUs.")]
-		public async Task EnsureOrdered(bool? value)
+		[Test]
+		public async Task EnsureOrdered()
 		{
 			var list = new List<int>();
-			var dataflow = SimpleDataflow.Create(new[] { 2000, 0 });
-			if (value != null)
-				dataflow = dataflow.EnsureOrdered(value.Value);
-			await dataflow
+			await SimpleDataflow.Create(new[] { 2000, 0 })
+				.EnsureOrdered()
 				.Transform(async x =>
 				{
 					await Task.Delay(x);
@@ -79,7 +75,7 @@ namespace SimpleDataflows.Tests
 				.MaxDegreeOfParallelism(1)
 				.ForAll(x => list.Add(x))
 				.ExecuteAsync();
-			CollectionAssert.AreEqual((value ?? true) ? new[] { 2000, 0 } : new[] { 0, 2000 }, list);
+			CollectionAssert.AreEqual(new[] { 2000, 0 }, list);
 		}
 
 		[Test]
