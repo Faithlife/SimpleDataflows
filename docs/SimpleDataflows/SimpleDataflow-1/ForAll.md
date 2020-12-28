@@ -1,4 +1,4 @@
-# SimpleDataflow&lt;T&gt;.ForAll method (1 of 2)
+# SimpleDataflow&lt;T&gt;.ForAll method (1 of 3)
 
 Executes the specified action on each item in the pipeline.
 
@@ -17,7 +17,26 @@ Implemented with a `TransformBlock` that returns the same items.
 
 ---
 
-# SimpleDataflow&lt;T&gt;.ForAll method (2 of 2)
+# SimpleDataflow&lt;T&gt;.ForAll method (2 of 3)
+
+Executes the specified action on each item in the pipeline.
+
+```csharp
+public SimpleDataflow ForAll(Func<T, CancellationToken, Task> action)
+```
+
+## Remarks
+
+Implemented with a `TransformBlock` that returns the same items.
+
+## See Also
+
+* class [SimpleDataflow&lt;T&gt;](../SimpleDataflow-1.md)
+* namespace [SimpleDataflows](../../SimpleDataflows.md)
+
+---
+
+# SimpleDataflow&lt;T&gt;.ForAll method (3 of 3)
 
 Executes the specified action on each item in the pipeline.
 

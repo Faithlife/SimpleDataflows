@@ -1,10 +1,14 @@
 # SimpleDataflow&lt;T&gt;.MaxDegreeOfParallelism method
 
-Sets the maximum degree of parallelism for the next blocks. (Default `Environment.ProcessorCount / 2`.)
+Sets the maximum degree of parallelism for the next blocks.
 
 ```csharp
 public SimpleDataflow MaxDegreeOfParallelism(int value)
 ```
+
+## Remarks
+
+If this method is not called, the default is `Environment.ProcessorCount / 2`.
 
 ## See Also
 

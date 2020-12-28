@@ -1,10 +1,14 @@
 # SimpleDataflow&lt;T&gt;.EnsureOrdered method
 
-Sets ordered processing for the next blocks. (Default `true`.)
+Sets ordered processing for the next blocks.
 
 ```csharp
-public SimpleDataflow EnsureOrdered(bool value)
+public SimpleDataflow EnsureOrdered(bool value = true)
 ```
+
+## Remarks
+
+If this method is not called, the default is unordered.
 
 ## See Also
 

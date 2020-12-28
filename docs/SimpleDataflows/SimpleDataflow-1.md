@@ -11,14 +11,14 @@ public sealed class SimpleDataflow<T>
 | name | description |
 | --- | --- |
 | [Batch](SimpleDataflow-1/Batch.md)(…) | Links a `BatchBlock` to the pipeline. |
-| [BoundedCapacity](SimpleDataflow-1/BoundedCapacity.md)(…) | Sets the bounded capacity for the next blocks. (Default `DataflowBlockOptions.Unbounded`.) |
-| [EnsureOrdered](SimpleDataflow-1/EnsureOrdered.md)(…) | Sets ordered processing for the next blocks. (Default `true`.) |
+| [BoundedCapacity](SimpleDataflow-1/BoundedCapacity.md)(…) | Sets the bounded capacity for the next blocks. |
+| [EnsureOrdered](SimpleDataflow-1/EnsureOrdered.md)(…) | Sets ordered processing for the next blocks. |
 | [ExecuteAsync](SimpleDataflow-1/ExecuteAsync.md)() | Executes the pipeline. |
-| [ForAll](SimpleDataflow-1/ForAll.md)(…) | Executes the specified action on each item in the pipeline. (2 methods) |
+| [ForAll](SimpleDataflow-1/ForAll.md)(…) | Executes the specified action on each item in the pipeline. (3 methods) |
 | [LinkTo&lt;TNext&gt;](SimpleDataflow-1/LinkTo.md)(…) | Links the specified block to the pipeline. |
-| [MaxDegreeOfParallelism](SimpleDataflow-1/MaxDegreeOfParallelism.md)(…) | Sets the maximum degree of parallelism for the next blocks. (Default `Environment.ProcessorCount / 2`.) |
+| [MaxDegreeOfParallelism](SimpleDataflow-1/MaxDegreeOfParallelism.md)(…) | Sets the maximum degree of parallelism for the next blocks. |
 | [Transform&lt;TNext&gt;](SimpleDataflow-1/Transform.md)(…) | Links a `TransformBlock` to the pipeline. (3 methods) |
-| [TransformMany&lt;TNext&gt;](SimpleDataflow-1/TransformMany.md)(…) | Links a `TransformManyBlock` to the pipeline. (2 methods) |
+| [TransformMany&lt;TNext&gt;](SimpleDataflow-1/TransformMany.md)(…) | Links a `TransformManyBlock` to the pipeline. (3 methods) |
 
 ## See Also
 

@@ -1,4 +1,24 @@
-# SimpleDataflow&lt;T&gt;.TransformMany&lt;TNext&gt; method (1 of 2)
+# SimpleDataflow&lt;T&gt;.TransformMany&lt;TNext&gt; method (1 of 3)
+
+Links a `TransformManyBlock` to the pipeline.
+
+```csharp
+public SimpleDataflow<TNext> TransformMany<TNext>(
+    Func<T, CancellationToken, Task<IEnumerable<TNext>>> func)
+```
+
+## Remarks
+
+If necessary, use `Enumerable.AsEnumerable` to cast the return value to an `IEnumerable<T>` when using a lambda expression.
+
+## See Also
+
+* class [SimpleDataflow&lt;T&gt;](../SimpleDataflow-1.md)
+* namespace [SimpleDataflows](../../SimpleDataflows.md)
+
+---
+
+# SimpleDataflow&lt;T&gt;.TransformMany&lt;TNext&gt; method (2 of 3)
 
 Links a `TransformManyBlock` to the pipeline.
 
@@ -13,7 +33,7 @@ public SimpleDataflow<TNext> TransformMany<TNext>(Func<T, IEnumerable<TNext>> fu
 
 ---
 
-# SimpleDataflow&lt;T&gt;.TransformMany&lt;TNext&gt; method (2 of 2)
+# SimpleDataflow&lt;T&gt;.TransformMany&lt;TNext&gt; method (3 of 3)
 
 Links a `TransformManyBlock` to the pipeline.
 
