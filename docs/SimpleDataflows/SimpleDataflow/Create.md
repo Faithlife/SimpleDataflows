@@ -3,8 +3,7 @@
 Starts a linear pipeline of data using TPL Dataflow.
 
 ```csharp
-public static SimpleDataflow<ValueTuple> Create(
-    CancellationToken cancellationToken = default(CancellationToken))
+public static SimpleDataflow<ValueTuple> Create(CancellationToken cancellationToken = default)
 ```
 
 ## See Also
@@ -21,7 +20,7 @@ Starts a linear pipeline of data using TPL Dataflow.
 
 ```csharp
 public static SimpleDataflow<T> Create<T>(IEnumerable<T> initial, 
-    CancellationToken cancellationToken = default(CancellationToken))
+    CancellationToken cancellationToken = default)
 ```
 
 ## See Also
