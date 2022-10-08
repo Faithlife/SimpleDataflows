@@ -1,5 +1,9 @@
 # Release Notes
 
+## 0.4.1
+
+* Add .NET 6 target.
+
 ## 0.4.0
 
 * Change default for `EnsureOrdered` to `false`.
