@@ -8,7 +8,7 @@ defaults:
   run:
     shell: pwsh
 jobs:
-  build:
+  publish-docs:
     runs-on: windows-latest
     steps:
     - name: Check out code
@@ -21,4 +21,4 @@ jobs:
       env:
         BUILD_BOT_PASSWORD: ${{ secrets.BUILD_BOT_PASSWORD }}
         NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
-      run: .\build.ps1 publish --no-tests --trigger publish-docs
+      run: .\build.ps1 publish --no-test --trigger publish-docs
