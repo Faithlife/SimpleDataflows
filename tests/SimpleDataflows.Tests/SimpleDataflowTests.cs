@@ -15,7 +15,7 @@ public class SimpleDataflowTests
 			.Transform(async x => await Task.Run(x.Sum))
 			.Batch(int.MaxValue)
 			.Transform(x => x.Sum())
-			.ForAll(x => list.Add(x))
+			.ForAll(list.Add)
 			.ExecuteAsync();
 		CollectionAssert.AreEqual(new[] { 1 + 55 + 5050 }, list);
 	}
@@ -30,7 +30,7 @@ public class SimpleDataflowTests
 			.Transform(async x => await Task.Run(x.Sum))
 			.Batch(int.MaxValue)
 			.Transform(x => x.Sum())
-			.ForAll(x => list.Add(x))
+			.ForAll(list.Add)
 			.ExecuteAsync();
 		CollectionAssert.AreEqual(new[] { 5050 }, list);
 	}
@@ -68,7 +68,7 @@ public class SimpleDataflowTests
 				return x;
 			})
 			.MaxDegreeOfParallelism(1)
-			.ForAll(x => list.Add(x))
+			.ForAll(list.Add)
 			.ExecuteAsync();
 		CollectionAssert.AreEqual(new[] { 2000, 0 }, list);
 	}
