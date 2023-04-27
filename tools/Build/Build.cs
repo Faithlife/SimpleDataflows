@@ -10,10 +10,9 @@ return BuildRunner.Execute(args, build =>
 			{
 				GitLogin = gitLogin,
 				GitAuthor = new GitAuthorInfo("Faithlife Build Bot", "faithlifebuildbot@users.noreply.github.com"),
-				GitRepositoryUrl = "https://github.com/Faithlife/SimpleDataflows.git",
+				SourceCodeUrl = "https://github.com/Faithlife/SimpleDataflows/tree/master/src",
 				GitBranchName = "docs",
 				TargetDirectory = "",
-				SourceCodeUrl = "https://github.com/Faithlife/SimpleDataflows/tree/master/src",
 			},
 			PackageSettings = new DotNetPackageSettings
 			{
